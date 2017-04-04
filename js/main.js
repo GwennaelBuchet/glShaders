@@ -85,9 +85,9 @@ function main() {
             animatedLoader.setText("Loading Shaders ...");
             return loadShaders();
         })
-        .then(function (shadersSource) {
+        .then(function () {
             animatedLoader.setText("Initializing SL Programs ...");
-            return initPrograms(shadersSource);
+            return initPrograms(shaders);
         })
         .then(function () {
             animatedLoader.setText("Loading Textures ...");
@@ -127,32 +127,3 @@ function main() {
         });
 }
 
-function initPrograms(shadersSource) {
-    return new Promise(function (resolve, reject) {
-
-        for (let i = 0, len = shadersSource.length; i < len; i += 2) {
-            let vertexSource = _loadShader(gl, shadersSource[i], "vs");
-            let fragmentSource = _loadShader(gl, shadersSource[i + 1], "fs");
-
-            initShader(gl, "program_" + i, vertexSource, fragmentSource);
-        }
-
-        params.currentShaderProgram = shaderPrograms["program_0"];
-
-        resolve();
-    });
-}
-
-function loadShaders() {
-    return new Promise(function (resolve, reject) {
-        loadShaderFiles(["js/shaders/vs/simple.glsl", "js/shaders/fs/monochrome.glsl"])
-            .then(
-                function (shadersSource) {
-                    resolve(shadersSource);
-                }
-            ).catch(
-            function (error) {
-                reject(error);
-            });
-    });
-}

@@ -49,3 +49,23 @@ function toggleFullscreen(element, glContext, normalDimension) {
         glContext.viewportHeight = element.height = normalDimension.h;
     }
 }
+
+function LoadFile(url) {
+    return new Promise(function (resolve, reject) {
+        const req = new XMLHttpRequest();
+
+        req.onload = function () {
+            if (this.status === 200) {
+                resolve(req.responseText);
+            } else {
+                reject(Error("Unable to load '" + url + "' file: " + req.statusText));
+            }
+        };
+        req.onerror = function () {
+            reject(Error('There was a network error.'));
+        };
+
+        req.open('GET', url, true);
+        req.send(null);
+    });
+}
