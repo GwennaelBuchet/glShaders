@@ -1,7 +1,7 @@
 (function (scope, undefined) {
     'use strict';
 
-    var OBJ = {};
+    let OBJ = {};
 
     if (typeof module !== 'undefined') {
         module.exports = OBJ;
@@ -89,7 +89,7 @@
          exists in the hashindices object, its corresponding value is the index of
          that group and is appended to the unpacked indices array.
          */
-        var verts = [], vertNormals = [], textures = [], unpacked = {};
+        let verts = [], vertNormals = [], textures = [], unpacked = {};
         // unpacking stuff
         unpacked.verts = [];
         unpacked.norms = [];
@@ -98,17 +98,17 @@
         unpacked.indices = [];
         unpacked.index = 0;
         // array of lines separated by the newline
-        var lines = objectData.split('\n');
+        let lines = objectData.split('\n');
 
-        var VERTEX_RE = /^v\s/;
-        var NORMAL_RE = /^vn\s/;
-        var TEXTURE_RE = /^vt\s/;
-        var FACE_RE = /^f\s/;
-        var WHITESPACE_RE = /\s+/;
+        let VERTEX_RE = /^v\s/;
+        let NORMAL_RE = /^vn\s/;
+        let TEXTURE_RE = /^vt\s/;
+        let FACE_RE = /^f\s/;
+        let WHITESPACE_RE = /\s+/;
 
-        for (var i = 0; i < lines.length; i++) {
-            var line = lines[i].trim();
-            var elements = line.split(WHITESPACE_RE);
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            let elements = line.split(WHITESPACE_RE);
             elements.shift();
 
             if (VERTEX_RE.test(line)) {
@@ -129,22 +129,22 @@
                  becomes:
                  ['16/92/11', '14/101/22', '1/69/1'];
                  */
-                var quad = false;
-                for (var j = 0, eleLen = elements.length; j < eleLen; j++){
+                let quad = false;
+                for (let j = 0, eleLen = elements.length; j < eleLen; j++) {
                     // Triangulating quads
                     // quad: 'f v0/t0/vn0 v1/t1/vn1 v2/t2/vn2 v3/t3/vn3/'
                     // corresponding triangles:
                     //      'f v0/t0/vn0 v1/t1/vn1 v2/t2/vn2'
                     //      'f v2/t2/vn2 v3/t3/vn3 v0/t0/vn0'
-                    if(j === 3 && !quad) {
+                    if (j === 3 && !quad) {
                         // add v2/t2/vn2 in again before continuing to 3
                         j = 2;
                         quad = true;
                     }
-                    if(elements[j] in unpacked.hashindices){
+                    if (elements[j] in unpacked.hashindices) {
                         unpacked.indices.push(unpacked.hashindices[elements[j]]);
                     }
-                    else{
+                    else {
                         /*
                          Each element of the face line array is a vertex which has its
                          attributes delimited by a forward slash. This will separate
@@ -159,7 +159,7 @@
                          Think of faces having Vertices which are comprised of the
                          attributes location (v), texture (vt), and normal (vn).
                          */
-                        var vertex = elements[ j ].split( '/' );
+                        let vertex = elements[j].split('/');
                         /*
                          The verts, textures, and vertNormals arrays each contain a
                          flattend array of coordinates.
@@ -198,9 +198,9 @@
                         // increment the counter
                         unpacked.index += 1;
                     }
-                    if(j === 3 && quad) {
+                    if (j === 3 && quad) {
                         // add v0/t0/vn0 onto the second triangle
-                        unpacked.indices.push( unpacked.hashindices[elements[0]]);
+                        unpacked.indices.push(unpacked.hashindices[elements[0]]);
                     }
                 }
             }
@@ -209,22 +209,22 @@
         this.vertexNormals = unpacked.norms;
         this.textures = unpacked.textures;
         this.indices = unpacked.indices;
-    }
+    };
 
-    var Ajax = function(){
+    let Ajax = function () {
         // this is just a helper class to ease ajax calls
-        var _this = this;
+        let _this = this;
         this.xmlhttp = new XMLHttpRequest();
 
-        this.get = function(url, callback){
-            _this.xmlhttp.onreadystatechange = function(){
-                if(_this.xmlhttp.readyState === 4){
+        this.get = function (url, callback) {
+            _this.xmlhttp.onreadystatechange = function () {
+                if (_this.xmlhttp.readyState === 4) {
                     callback(_this.xmlhttp.responseText, _this.xmlhttp.status);
                 }
             };
             _this.xmlhttp.open('GET', url, true);
             _this.xmlhttp.send();
-        }
+        };
     };
 
     /**
@@ -244,19 +244,19 @@
      * @param {Object} meshes In case other meshes are loaded separately or if a previously declared variable is desired to be used, pass in a (possibly empty) json object of the pattern: { '<mesh_name>': OBJ.Mesh }
      *
      */
-    OBJ.downloadMeshes = function (nameAndURLs, completionCallback, meshes){
+    OBJ.downloadMeshes = function (nameAndURLs, completionCallback, meshes) {
         // the total number of meshes. this is used to implement "blocking"
-        var semaphore = Object.keys(nameAndURLs).length;
+        let semaphore = Object.keys(nameAndURLs).length;
         // if error is true, an alert will given
-        var error = false;
+        let error = false;
         // this is used to check if all meshes have been downloaded
         // if meshes is supplied, then it will be populated, otherwise
         // a new object is created. this will be passed into the completionCallback
-        if(meshes === undefined) meshes = {};
+        if (meshes === undefined) meshes = {};
         // loop over the mesh_name,url key,value pairs
-        for(var mesh_name in nameAndURLs){
-            if(nameAndURLs.hasOwnProperty(mesh_name)){
-                new Ajax().get(nameAndURLs[mesh_name], (function(name) {
+        for (let mesh_name in nameAndURLs) {
+            if (nameAndURLs.hasOwnProperty(mesh_name)) {
+                new Ajax().get(nameAndURLs[mesh_name], (function (name) {
                     return function (data, status) {
                         if (status === 200) {
                             meshes[name] = new OBJ.Mesh(data);
@@ -286,9 +286,9 @@
         }
     };
 
-    var _buildBuffer = function( gl, type, data, itemSize ){
-        var buffer = gl.createBuffer();
-        var arrayView = type === gl.ARRAY_BUFFER ? Float32Array : Uint16Array;
+    let _buildBuffer = function (gl, type, data, itemSize) {
+        let buffer = gl.createBuffer();
+        let arrayView = type === gl.ARRAY_BUFFER ? Float32Array : Uint16Array;
         gl.bindBuffer(type, buffer);
         gl.bufferData(type, new arrayView(data), gl.STATIC_DRAW);
         buffer.itemSize = itemSize;
@@ -325,10 +325,10 @@
      *
      * A simple example (a lot of steps are missing, so don't copy and paste):
      *
-     *     var gl   = canvas.getContext('webgl'),
+     *     let gl   = canvas.getContext('webgl'),
      *         mesh = OBJ.Mesh(obj_file_data);
      *     // compile the shaders and create a shader program
-     *     var shaderProgram = gl.createProgram();
+     *     let shaderProgram = gl.createProgram();
      *     // compilation stuff here
      *     ...
      *     // make sure you have vertex, vertex normal, and texture coordinate
@@ -370,14 +370,14 @@
      *     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.mesh.indexBuffer);
      *     gl.drawElements(gl.TRIANGLES, model.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
      */
-    OBJ.initMeshBuffers = function( gl, mesh ){
+    OBJ.initMeshBuffers = function (gl, mesh) {
         mesh.normalBuffer = _buildBuffer(gl, gl.ARRAY_BUFFER, mesh.vertexNormals, 3);
         mesh.textureBuffer = _buildBuffer(gl, gl.ARRAY_BUFFER, mesh.textures, 2);
         mesh.vertexBuffer = _buildBuffer(gl, gl.ARRAY_BUFFER, mesh.vertices, 3);
         mesh.indexBuffer = _buildBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, mesh.indices, 1);
     };
 
-    OBJ.deleteMeshBuffers = function( gl, mesh ){
+    OBJ.deleteMeshBuffers = function (gl, mesh) {
         gl.deleteBuffer(mesh.normalBuffer);
         gl.deleteBuffer(mesh.textureBuffer);
         gl.deleteBuffer(mesh.vertexBuffer);
