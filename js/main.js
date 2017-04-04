@@ -59,11 +59,28 @@ function render() {
 /**
  * Entry point for our application
  */
-function main(models) {
+function main() {
+    animatedLoader.setText("Loading Meshes ...");
 
-    animatedLoader.setText("Initializing GL Scene ...");
+    OBJ.downloadMeshes({
+        'Bootle': 'models/bottle.obj',
+        'Driver': 'models/driver.obj',
+        'Mei': 'models/mei.obj',
+        'Skelout': 'models/internal_skelout_full.obj',
+        'SpeedCar': 'models/SpeedCar.obj',
+        'Teapot': 'models/teapot.obj',
+        'Teddy': 'models/teddy.obj',
+        'Tuna': 'models/tuna.obj',
+        'Vi': 'models/vi.obj',
+        'X-Wing': 'models/x-wing.obj'
+    })
+        .then(function (m) {
+            meshes = m;
+            params.currentMesh = meshes[Object.keys(meshes)[0]];
 
-    initGL()
+            animatedLoader.setText("Initializing GL Scene ...");
+            initGL();
+        })
         .then(function () {
             animatedLoader.setText("Loading Shaders ...");
             return loadShaders();
@@ -73,13 +90,9 @@ function main(models) {
             return initPrograms(shadersSource);
         })
         .then(function () {
-
             animatedLoader.setText("Loading Textures ...");
             initTexture();
 
-            meshes = models;
-
-            params.currentMesh = meshes[Object.keys(meshes)[0]];
             params.renderingMode = gl.TRIANGLES;
 
             animatedLoader.setText("Initializing Controllers and Menu ...");
@@ -142,22 +155,4 @@ function loadShaders() {
                 reject(error);
             });
     });
-}
-
-function startLoading() {
-    animatedLoader.setText("Loading Meshes ...");
-    OBJ.downloadMeshes({
-            'Bootle': 'models/bottle.obj',
-            'Driver': 'models/driver.obj',
-            'Mei': 'models/mei.obj',
-            'Skelout': 'models/internal_skelout_full.obj',
-            'SpeedCar': 'models/SpeedCar.obj',
-            'Teapot': 'models/teapot.obj',
-            'Teddy': 'models/teddy.obj',
-            'Tuna': 'models/tuna.obj',
-            'Vi': 'models/vi.obj',
-            'X-Wing': 'models/x-wing.obj'
-        },
-        main
-    );
 }

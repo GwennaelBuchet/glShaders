@@ -245,45 +245,49 @@
      *
      */
     OBJ.downloadMeshes = function (nameAndURLs, completionCallback, meshes) {
-        // the total number of meshes. this is used to implement "blocking"
-        let semaphore = Object.keys(nameAndURLs).length;
-        // if error is true, an alert will given
-        let error = false;
-        // this is used to check if all meshes have been downloaded
-        // if meshes is supplied, then it will be populated, otherwise
-        // a new object is created. this will be passed into the completionCallback
-        if (meshes === undefined) meshes = {};
-        // loop over the mesh_name,url key,value pairs
-        for (let mesh_name in nameAndURLs) {
-            if (nameAndURLs.hasOwnProperty(mesh_name)) {
-                new Ajax().get(nameAndURLs[mesh_name], (function (name) {
-                    return function (data, status) {
-                        if (status === 200) {
-                            meshes[name] = new OBJ.Mesh(data);
-                        }
-                        else {
-                            error = true;
-                            console.error('An error has occurred and the mesh "' +
-                                name + '" could not be downloaded.');
-                        }
-                        // the request has finished, decrement the counter
-                        semaphore--;
-                        if (semaphore === 0) {
-                            if (error) {
-                                // if an error has occurred, the user is notified here and the
-                                // callback is not called
-                                console.error('An error has occurred and one or meshes has not been ' +
-                                    'downloaded. The execution of the script has terminated.');
-                                throw '';
+
+        return new Promise(function (resolve, reject) {
+            // the total number of meshes. this is used to implement "blocking"
+            let semaphore = Object.keys(nameAndURLs).length;
+            // if error is true, an alert will given
+            let error = false;
+            // this is used to check if all meshes have been downloaded
+            // if meshes is supplied, then it will be populated, otherwise
+            // a new object is created. this will be passed into the completionCallback
+            if (meshes === undefined) meshes = {};
+            // loop over the mesh_name,url key,value pairs
+            for (let mesh_name in nameAndURLs) {
+                if (nameAndURLs.hasOwnProperty(mesh_name)) {
+                    new Ajax().get(nameAndURLs[mesh_name], (function (name) {
+                        return function (data, status) {
+                            if (status === 200) {
+                                meshes[name] = new OBJ.Mesh(data);
                             }
-                            // there haven't been any errors in retrieving the meshes
-                            // call the callback
-                            completionCallback(meshes);
+                            else {
+                                error = true;
+                                console.error('An error has occurred and the mesh "' +
+                                    name + '" could not be downloaded.');
+                            }
+                            // the request has finished, decrement the counter
+                            semaphore--;
+                            if (semaphore === 0) {
+                                if (error) {
+                                    // if an error has occurred, the user is notified here and the
+                                    // callback is not called
+                                    console.error('An error has occurred and one or meshes has not been ' +
+                                        'downloaded. The execution of the script has terminated.');
+                                    throw '';
+                                }
+                                // there haven't been any errors in retrieving the meshes
+                                // call the callback
+                                resolve(meshes);
+                                //completionCallback(meshes);
+                            }
                         }
-                    }
-                })(mesh_name));
+                    })(mesh_name));
+                }
             }
-        }
+        });
     };
 
     let _buildBuffer = function (gl, type, data, itemSize) {
