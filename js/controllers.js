@@ -85,6 +85,8 @@ function initMouse() {
 }
 
 function initMenu() {
+    let gui = new dat.gui.GUI();
+
     let _m = [];
     for (let property in meshes) {
         if (meshes.hasOwnProperty(property)) {
@@ -92,16 +94,14 @@ function initMenu() {
         }
     }
 
-    let gui = new dat.gui.GUI();
     let ctrlMesh = gui.add(params, 'currentMesh', _m).name("Model");
     ctrlMesh.onFinishChange(function (value) {
         params.currentMesh = meshes[value];
     });
-
     gui.add(params, 'isAnimated').name('Animation');
 
     let f1 = gui.addFolder('Rendering');
-    f1.add(params, 'currentShaderProgram', shaderPrograms);
+    f1.add(params, 'currentShaderProgram', shaderPrograms).name("Program");
     f1.add(params, 'renderingMode', {
         Points: gl.POINTS,
         Wire: gl.LINES,
