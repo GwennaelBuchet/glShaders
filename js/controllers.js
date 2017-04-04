@@ -93,15 +93,15 @@ function initMenu() {
     }
 
     let gui = new dat.gui.GUI();
-    let ctrlMesh = gui.add(params, 'currentMeshName', _m).name("Model");
+    let ctrlMesh = gui.add(params, 'currentMesh', _m).name("Model");
     ctrlMesh.onFinishChange(function (value) {
-        params.currentMeshName = meshes[value];
+        params.currentMesh = meshes[value];
     });
 
     gui.add(params, 'isAnimated').name('Animation');
 
     let f1 = gui.addFolder('Rendering');
-    f1.add(params, 'currentShaderProgramName', shaderPrograms);
+    f1.add(params, 'currentShaderProgram', shaderPrograms);
     f1.add(params, 'renderingMode', {
         Points: gl.POINTS,
         Wire: gl.LINES,

@@ -16,8 +16,8 @@ let shaderPrograms = {};
 let meshes = {};
 
 let params = {
-    currentShaderProgramName: null,
-    currentMeshName: null,
+    currentShaderProgram: null,
+    currentMesh: null,
 
     isAnimated: true,
     renderingMode: null

@@ -5,8 +5,8 @@ function renderScene() {
 
     //        let mesh = meshes[property];
 
-    let mesh = params.currentMeshName;
-    let program = params.currentShaderProgramName;
+    let mesh = params.currentMesh;
+    let program = params.currentShaderProgram;
 
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
@@ -83,7 +83,7 @@ function main(models) {
 
             meshes = models;
 
-            params.currentMeshName = meshes[Object.keys(meshes)[0]];
+            params.currentMesh = meshes[Object.keys(meshes)[0]];
             params.renderingMode = gl.TRIANGLES;
 
             initKeyboard();
@@ -123,7 +123,7 @@ function initPrograms(shadersSource) {
             initShader(gl, "program_" + i, vertexSource, fragmentSource);
         }
 
-        params.currentShaderProgramName = shaderPrograms["program_0"];
+        params.currentShaderProgram = shaderPrograms["program_0"];
 
         resolve();
     });
