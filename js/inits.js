@@ -21,7 +21,7 @@ function initGL() {
     });
 }
 
-function handleLoadedTexture(t) {
+function _handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, t.image);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -30,14 +30,49 @@ function handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function initTexture() {
-    /*texture = gl.createTexture();
-     texture.image = new Image();
-     texture.image.onload = function () {
-     handleLoadedTexture(texture)
-     };
+function _loadTexture(url) {
+    return new Promise(function (resolve, reject) {
 
-     texture.image.src = "../img/zenika_1.jpg";*/
+        let name = couple[Object.keys(couple)[0]];
+        let url = couple[Object.keys(couple)[1]];
+
+        texture = gl.createTexture();
+        texture.image = new Image();
+        texture.image.onload = function () {
+            _handleLoadedTexture(texture);
+            resolve(name, texture);
+        };
+
+        texture.image.src = url;
+
+        resolve();
+
+    });
+}
+
+/**
+ *
+ * @param urls {Array} of objects with 1 attribute : {name : url}
+ * @returns {Promise}
+ */
+function initTexture(urls) {
+    //urls = [{"zenika_beach" : "../img/zenika_1.jpg"}];
+
+    return new Promise(function (resolve, reject) {
+
+        let u = [];
+        urls.forEach(function (couple) {
+            u.push(new _loadTexture(couple));
+        });
+
+        Promise
+            .all(u)
+            .then(values => {
+                resolve(values);
+            }, reason => {
+                reject(reason);
+            });
+    });
 }
 
 function createShaderProgram(gl, programName, vertexShader, fragmentShader) {
