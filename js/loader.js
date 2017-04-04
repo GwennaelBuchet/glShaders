@@ -1,7 +1,7 @@
 /**
  * Created by gwennael.buchet on 04/04/17.
  */
-class Loader {
+class AnimatedLoader {
 
     constructor(idElt) {
         this.elt = document.getElementById(idElt);

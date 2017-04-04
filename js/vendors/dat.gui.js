@@ -4205,7 +4205,7 @@
              MIT License http://www.opensource.org/licenses/mit-license.php
              Author Tobias Koppers @sokra
              */
-            // css base code, injected by the css-loader
+            // css base code, injected by the css-animatedLoader
             module.exports = function() {
                 var list = [];
 

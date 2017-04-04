@@ -61,18 +61,20 @@ function render() {
  */
 function main(models) {
 
-    loader.setText("Init GL Scene ...");
+    animatedLoader.setText("Initializing GL Scene ...");
 
     initGL()
         .then(function () {
-            loader.setText("Load Shaders ...");
+            animatedLoader.setText("Loading Shaders ...");
             return loadShaders();
         })
         .then(function (shadersSource) {
+            animatedLoader.setText("Initializing SL Programs ...");
             return initPrograms(shadersSource);
         })
         .then(function () {
 
+            animatedLoader.setText("Loading Textures ...");
             initTexture();
 
             meshes = models;
@@ -80,20 +82,22 @@ function main(models) {
             params.currentMesh = meshes[Object.keys(meshes)[0]];
             params.renderingMode = gl.TRIANGLES;
 
+            animatedLoader.setText("Initializing Controllers and Menu ...");
             initKeyboard();
             initMouse();
             initMenu();
 
             if (gl) {
-
-                loader.destroy(canvas);
-
+                animatedLoader.setText("Initializing VBOs ...");
                 // initialize the VBOs
                 for (let property in meshes) {
                     if (meshes.hasOwnProperty(property)) {
                         OBJ.initMeshBuffers(gl, meshes[property]);
                     }
                 }
+
+                animatedLoader.setText("Start Rendering ...");
+                animatedLoader.destroy(canvas);
 
                 gl.clearColor(0.0, 0.0, 0.0, 1.0);
                 gl.enable(gl.DEPTH_TEST);
@@ -141,7 +145,7 @@ function loadShaders() {
 }
 
 function startLoading() {
-    loader.setText("Loading Meshes ...");
+    animatedLoader.setText("Loading Meshes ...");
     OBJ.downloadMeshes({
             'Bootle': 'models/bottle.obj',
             'Driver': 'models/driver.obj',

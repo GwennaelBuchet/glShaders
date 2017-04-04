@@ -23,4 +23,4 @@ let params = {
     renderingMode: null
 };
 
-let loader = new Loader("loader");
+let animatedLoader = new AnimatedLoader("animatedLoader");
