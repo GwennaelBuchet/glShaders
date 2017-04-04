@@ -10,6 +10,7 @@ class AnimatedLoader {
 
     setText(txt) {
         this.txtElt.innerText = txt;
+        console.log(txt);
     };
 
     destroy(lowerElt) {
