@@ -56,11 +56,20 @@ function render() {
     renderScene();
 }
 
+function hideLoader(canvas) {
+    canvas.style.display = "block";
+
+    let loader = document.getElementById("loader");
+    loader.parentNode.removeChild(loader);
+}
+
 /**
  * Entry point for our application
  */
 function main(models) {
     const canvas = document.getElementById("scene");
+
+    hideLoader(canvas);
 
     initGL(canvas);
     initShaders();
