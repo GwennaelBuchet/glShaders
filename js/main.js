@@ -5,8 +5,8 @@ function renderScene() {
 
     //        let mesh = meshes[property];
 
-    let mesh = params.currentMesh;
-    let program = params.currentShaderProgram;
+    let mesh = params.currentMeshName;
+    let program = params.currentShaderProgramName;
 
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
@@ -67,42 +67,80 @@ function hideLoader(canvas) {
  * Entry point for our application
  */
 function main(models) {
-    const canvas = document.getElementById("scene");
-
     hideLoader(canvas);
 
-    initGL(canvas);
-    initShaders();
-    initTexture();
+    initGL()
+        .then(function () {
+            //initShaders();
+            return loadShaders();
+        })
+        .then(function (shadersSource) {
+            return initPrograms(shadersSource);
+        })
+        .then(function () {
 
-    params.currentMesh = models['Teapot'];
-    params.renderingMode = gl.TRIANGLES;
-    meshes = models;
+            initTexture();
 
-    initKeyboard();
-    initMouse();
-    initMenu();
+            meshes = models;
 
-    if (gl) {
-        // initialize the VBOs
-        for (let property in meshes) {
-            if (meshes.hasOwnProperty(property)) {
-                OBJ.initMeshBuffers(gl, meshes[property]);
+            params.currentMeshName = meshes[Object.keys(meshes)[0]];
+            params.renderingMode = gl.TRIANGLES;
+
+            initKeyboard();
+            initMouse();
+            initMenu();
+
+            if (gl) {
+                // initialize the VBOs
+                for (let property in meshes) {
+                    if (meshes.hasOwnProperty(property)) {
+                        OBJ.initMeshBuffers(gl, meshes[property]);
+                    }
+                }
+
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.enable(gl.DEPTH_TEST);
+                gl.depthFunc(gl.LEQUAL);
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+                gl.enable(gl.BLEND);
+                gl.disable(gl.DEPTH_TEST);
+
+                render();
             }
+        });
+}
+
+function initPrograms(shadersSource) {
+    return new Promise(function (resolve, reject) {
+
+        for (let i = 0, len = shadersSource.length; i < len; i += 2) {
+            let vertexSource = _loadShader(gl, shadersSource[i], "vs");
+            let fragmentSource = _loadShader(gl, shadersSource[i + 1], "fs");
+
+            initShader(gl, "program_" + i, vertexSource, fragmentSource);
         }
 
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        params.currentShaderProgramName = shaderPrograms["program_0"];
 
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        gl.enable(gl.BLEND);
-        gl.disable(gl.DEPTH_TEST);
+        resolve();
+    });
+}
 
-        render();
-    }
+function loadShaders() {
+    return new Promise(function (resolve, reject) {
+        loadShaderFiles(["js/shaders/vs/simple.glsl", "js/shaders/fs/monochrome.glsl"])
+            .then(
+                function (shadersSource) {
+                    resolve(shadersSource);
+                }
+            ).catch(
+            function (error) {
+                reject(error);
+            });
+    });
 }
 
 function loadMeshes() {
@@ -116,7 +154,7 @@ function loadMeshes() {
             'Teddy': 'models/teddy.obj',
             'Tuna': 'models/tuna.obj',
             'Vi': 'models/vi.obj',
-            'X-Wing': 'models/x-wing.obj',
+            'X-Wing': 'models/x-wing.obj'
         },
         main
     );

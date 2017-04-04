@@ -9,14 +9,18 @@
 </head>
 <body onload="loadMeshes();">
 
-<div id="loader" class="loader centered"></div>
+
+<div id="loader" class="loader centered">
+    <div id="loaderAnimation" class="loaderAnimation"></div>
+    <span id="loaderText">Loading Models...</span>
+</div>
 
 <canvas id="scene" width="800" height="600" class="centered" style="display: none">
     Your browser does not support Canvas <code>&lt;canvas&gt;</code>.
 </canvas>
 
 
-<script id="vs-simple" type="x-shader/x-vertex">
+<!--script id="vs-simple" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
     attribute vec3 aVertexNormal;
     attribute vec2 aTextureCoord;
@@ -35,7 +39,7 @@
     void main(void) {
         gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }
-</script>
+</script-->
 
 <script type="text/javascript" src="js/vendors/dat.gui.min.js"></script>
 <script type="text/javascript" src="js/vendors/gl-matrix.min.js"></script>
