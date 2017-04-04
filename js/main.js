@@ -9,7 +9,7 @@ function renderScene() {
     let program = params.currentShaderProgram;
 
     mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, mvMatrix, vec3.fromValues(0, 0, -10));
+    mat4.translate(mvMatrix, mvMatrix, vec3.fromValues(0, 0, sceneZTranslation));
     mat4.multiply(mvMatrix, mvMatrix, sceneRotationMatrix);
 
     gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);

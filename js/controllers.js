@@ -37,7 +37,6 @@ function initKeyboard() {
 let mouseDown = false;
 let lastMouseX = null;
 let lastMouseY = null;
-let sceneRotationMatrix = mat4.create();
 function handleMouseDown(event) {
     mouseDown = true;
     lastMouseX = event.clientX;
@@ -69,10 +68,20 @@ function handleMouseMove(event) {
     lastMouseY = newY;
 }
 
+function handleMouseWheel(event) {
+    sceneZTranslation += event.deltaY / 50.0;
+}
+
 function initMouse() {
     canvas.onmousedown = handleMouseDown;
     document.onmouseup = handleMouseUp;
     document.onmousemove = handleMouseMove;
+
+    let mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+    if (document.attachEvent) //if IE (and Opera depending on user setting)
+        document.attachEvent("on"+mousewheelevt, handleMouseWheel);
+    else if (document.addEventListener) //WC3 browsers
+        document.addEventListener(mousewheelevt, handleMouseWheel, false);
 }
 
 function initMenu() {
