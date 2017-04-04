@@ -2,16 +2,19 @@ let gl;
 let canvas;
 let canvasDimension = {};
 
-let shaderPrograms = [];
-let currentShaderProgram = null;
 let mvMatrix = mat4.create();
 let pMatrix = mat4.create();
 
+let shaderPrograms = {};
 let meshes = {};
-let currentMesh = null;
 
-let isAnimated = true;
-let renderingModes = null;
+let params = {
+    currentShaderProgram: null,
+    currentMesh: null,
+
+    isAnimated: true,
+    renderingMode: null
+};
 
 function initGL(canvasElt) {
     try {
@@ -90,9 +93,9 @@ function initShaders() {
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 
-    shaderPrograms["simple"] = shaderProgram;
+    shaderPrograms.simple = shaderProgram;
 
-    currentShaderProgram = shaderPrograms["simple"];
+    params.currentShaderProgram = shaderPrograms.simple;
 }
 
 function handleLoadedTexture(t) {
@@ -116,49 +119,42 @@ function initTexture() {
 
 function renderScene() {
 
-    //Object.keys(meshes)
+    //for (let property in meshes) {
+    //    if (meshes.hasOwnProperty(property)) {
 
-    for (let property in meshes) {
-        if (meshes.hasOwnProperty(property)) {
+    //        let mesh = meshes[property];
 
-            let mesh = meshes[property];
+    let mesh = params.currentMesh;
+    let program = params.currentShaderProgram;
 
-            mat4.identity(mvMatrix);
-            mat4.translate(mvMatrix, mvMatrix, vec3.fromValues(0, 0, -10));
-            mat4.multiply(mvMatrix, mvMatrix, sceneRotationMatrix);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, mvMatrix, vec3.fromValues(0, 0, -10));
+    mat4.multiply(mvMatrix, mvMatrix, sceneRotationMatrix);
 
-            gl.uniformMatrix4fv(currentShaderProgram.pMatrixUniform, false, pMatrix);
-            gl.uniformMatrix4fv(currentShaderProgram.mvMatrixUniform, false, mvMatrix);
+    gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-            gl.vertexAttribPointer(currentShaderProgram.vertexPositionAttribute, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
+    gl.vertexAttribPointer(program.vertexPositionAttribute, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-            if (!mesh.textures.length) {
-                gl.disableVertexAttribArray(currentShaderProgram.textureCoordAttribute);
-            }
-            else {
-                // if the texture vertexAttribArray has been previously
-                // disabled, then it needs to be re-enabled
-                gl.enableVertexAttribArray(currentShaderProgram.textureCoordAttribute);
-                gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
-                gl.vertexAttribPointer(currentShaderProgram.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
-            }
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
-            gl.vertexAttribPointer(currentShaderProgram.vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-            gl.drawElements(gl.TRIANGLES, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-        }
+    if (!mesh.textures.length) {
+        gl.disableVertexAttribArray(program.textureCoordAttribute);
+    }
+    else {
+        // if the texture vertexAttribArray has been previously
+        // disabled, then it needs to be re-enabled
+        gl.enableVertexAttribArray(program.textureCoordAttribute);
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
+        gl.vertexAttribPointer(program.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
     }
 
-    /*
-     gl.uniform1f(shaderProgram.alphaUniform, square.alpha);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
+    gl.vertexAttribPointer(program.vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-     gl.activeTexture(gl.TEXTURE0);
-     gl.bindTexture(gl.TEXTURE_2D, texture);
-     gl.uniform1i(shaderProgram.samplerUniform, 0);
-     */
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
+    gl.drawElements(params.renderingMode, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+    //    }
+    //}
 }
 
 
@@ -185,16 +181,16 @@ function initKeyboard() {
 
         switch (event.key) {
             case " " :
-                isAnimated = !isAnimated;
+                params.isAnimated = !params.isAnimated;
                 break;
             case "Enter" :
                 mat4.identity(sceneRotationMatrix);
                 break;
             case "w" :
-                renderingModes = gl.LINES;
+                params.renderingMode = gl.LINES;
                 break;
             case "t" :
-                renderingModes = gl.TRIANGLE_STRIP;
+                params.renderingMode = gl.TRIANGLE_STRIP;
                 break;
             case "f":
                 toggleFullscreen(canvas, gl, canvasDimension);
@@ -203,8 +199,6 @@ function initKeyboard() {
             default:
                 return; // Quit when this doesn't handle the key event.
         }
-
-        console.log("deltaZ = " + deltaZ);
 
         event.preventDefault();
     }, true);
@@ -251,6 +245,33 @@ function initMouse() {
     document.onmousemove = handleMouseMove;
 }
 
+function initMenu() {
+
+    let _m = [];
+    for (let property in meshes) {
+        if (meshes.hasOwnProperty(property)) {
+            _m.push(property)
+        }
+    }
+
+
+    let gui = new dat.gui.GUI();
+    let ctrlMesh = gui.add(params, 'currentMesh', _m).name("Model");
+    ctrlMesh.onFinishChange(function(value) {
+        params.currentMesh = meshes[value];
+    });
+
+    gui.add(params, 'isAnimated').name('Animation');
+
+    let f1 = gui.addFolder('Rendering');
+    f1.add(params, 'currentShaderProgram', shaderPrograms);
+    f1.add(params, 'renderingMode', {
+        Points: gl.POINTS,
+        Wire: gl.LINES,
+        Triangles: gl.TRIANGLES
+    }).name("Rendering Mode");
+}
+
 /**
  * Entry point for our application
  */
@@ -259,17 +280,23 @@ function main(models) {
 
     initGL(canvas);
     initShaders();
-    renderingModes = gl.TRIANGLE_STRIP;
+    initTexture();
+
+    params.currentMesh = models['Teapot'];
+    params.renderingMode = gl.TRIANGLES;
+    meshes = models;
 
     initKeyboard();
     initMouse();
-
-    initTexture();
+    initMenu();
 
     if (gl) {
-        meshes = models;
         // initialize the VBOs
-        OBJ.initMeshBuffers(gl, meshes.teapot);
+        for (let property in meshes) {
+            if (meshes.hasOwnProperty(property)) {
+                OBJ.initMeshBuffers(gl, meshes[property]);
+            }
+        }
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
@@ -287,7 +314,13 @@ function main(models) {
 
 function loadMeshes() {
     OBJ.downloadMeshes({
-            'teapot': 'models/teapot.obj'
+            'Teapot': 'models/teapot.obj',
+            'Tuna': 'models/tuna.obj',
+            'X-Wing': 'models/x-wing.obj',
+            'SpeedCar': 'models/SpeedCar.obj',
+            'Bootle': 'models/bottle.obj',
+            'Cube': 'models/cube.obj',
+
         },
         main
     );
