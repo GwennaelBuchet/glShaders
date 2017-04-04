@@ -3,7 +3,7 @@
  */
 
 let gl;
-let canvas;
+const canvas = document.getElementById("scene");
 let canvasDimension = {};
 
 let mvMatrix = mat4.create();
@@ -16,8 +16,8 @@ let shaderPrograms = {};
 let meshes = {};
 
 let params = {
-    currentShaderProgram: null,
-    currentMesh: null,
+    currentShaderProgramName: null,
+    currentMeshName: null,
 
     isAnimated: true,
     renderingMode: null

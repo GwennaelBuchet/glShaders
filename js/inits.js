@@ -2,40 +2,30 @@
  * Created by gwennael.buchet on 04/04/17.
  */
 
-function initGL(canvasElt) {
-    try {
-        gl = canvasElt.getContext("webgl") || canvasElt.getContext("experimental-webgl");
-        gl.viewportWidth = canvasElt.width;
-        gl.viewportHeight = canvasElt.height;
-        canvasDimension.w = canvasElt.width;
-        canvasDimension.h = canvasElt.height;
-        canvas = canvasElt;
-    } catch (e) {
-    }
-    if (!gl) {
-        alert("Could not initialise WebGL, sorry :-(");
-    }
+function initGL() {
+    return new Promise(function (resolve, reject) {
+        try {
+            gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+            canvasDimension.w = canvas.width;
+            canvasDimension.h = canvas.height;
+            resolve();
+        } catch (e) {
+            reject(Error("Could not initialise WebGL, sorry :-("));
+        }
+
+        if (!gl) {
+            reject(Error("Could not initialise WebGL, sorry :-("));
+        }
+    });
 }
 
-function _loadShader(gl, id) {
-    let shaderScript = document.getElementById(id);
-    if (!shaderScript) {
-        return null;
-    }
-
-    let source = "";
-    let k = shaderScript.firstChild;
-    while (k) {
-        if (k.nodeType === 3) {
-            source += k.textContent;
-        }
-        k = k.nextSibling;
-    }
-
+function _loadShader(gl, source, type) {
     let shader;
-    if (shaderScript.type === "x-shader/x-fragment") {
+    if (type === "fs" || type === "x-shader/x-fragment") {
         shader = gl.createShader(gl.FRAGMENT_SHADER);
-    } else if (shaderScript.type === "x-shader/x-vertex") {
+    } else if (type === "vs" || type === "x-shader/x-vertex") {
         shader = gl.createShader(gl.VERTEX_SHADER);
     } else {
         return null;
@@ -52,10 +42,7 @@ function _loadShader(gl, id) {
     return shader;
 }
 
-function initShaders() {
-    let fragmentShader = _loadShader(gl, "fs-monochrome");
-    let vertexShader = _loadShader(gl, "vs-simple");
-
+function initShader(gl, programName, vertexShader, fragmentShader) {
     let shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
@@ -81,9 +68,7 @@ function initShaders() {
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 
-    shaderPrograms.simple = shaderProgram;
-
-    params.currentShaderProgram = shaderPrograms.simple;
+    shaderPrograms[programName] = shaderProgram;
 }
 
 function handleLoadedTexture(t) {
@@ -103,4 +88,44 @@ function initTexture() {
      };
 
      texture.image.src = "../img/zenika_1.jpg";*/
+}
+
+function LoadFile(url) {
+    return new Promise(function (resolve, reject) {
+        const req = new XMLHttpRequest();
+
+        req.onload = function () {
+            if (this.status === 200) {
+                resolve(req.responseText);
+            } else {
+                reject(Error("Unable to load '" + url + "' file: " + req.statusText));
+            }
+        };
+        req.onerror = function () {
+            reject(Error('There was a network error.'));
+        };
+
+        req.open('GET', url, true);
+        req.send(null);
+    });
+}
+
+function loadShaderFiles(urls) {
+
+    return new Promise(function (resolve, reject) {
+
+        let u = [];
+
+        urls.forEach(function (url) {
+            u.push(new LoadFile(url));
+        });
+
+        Promise
+            .all(u)
+            .then(values => {
+                resolve(values);
+            }, reason => {
+                reject(reason);
+            });
+    });
 }

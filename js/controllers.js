@@ -77,9 +77,9 @@ function initMouse() {
     document.onmouseup = handleMouseUp;
     document.onmousemove = handleMouseMove;
 
-    let mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+    let mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
     if (document.attachEvent) //if IE (and Opera depending on user setting)
-        document.attachEvent("on"+mousewheelevt, handleMouseWheel);
+        document.attachEvent("on" + mousewheelevt, handleMouseWheel);
     else if (document.addEventListener) //WC3 browsers
         document.addEventListener(mousewheelevt, handleMouseWheel, false);
 }
@@ -93,15 +93,15 @@ function initMenu() {
     }
 
     let gui = new dat.gui.GUI();
-    let ctrlMesh = gui.add(params, 'currentMesh', _m).name("Model");
-    ctrlMesh.onFinishChange(function(value) {
-        params.currentMesh = meshes[value];
+    let ctrlMesh = gui.add(params, 'currentMeshName', _m).name("Model");
+    ctrlMesh.onFinishChange(function (value) {
+        params.currentMeshName = meshes[value];
     });
 
     gui.add(params, 'isAnimated').name('Animation');
 
     let f1 = gui.addFolder('Rendering');
-    f1.add(params, 'currentShaderProgram', shaderPrograms);
+    f1.add(params, 'currentShaderProgramName', shaderPrograms);
     f1.add(params, 'renderingMode', {
         Points: gl.POINTS,
         Wire: gl.LINES,
