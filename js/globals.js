@@ -9,7 +9,7 @@ let canvasDimension = {};
 let mvMatrix = mat4.create();
 let pMatrix = mat4.create();
 
-let sceneZTranslation = -10.0;
+let sceneTranslation = vec3.fromValues(0.0, 0.0, -10.0);
 let sceneRotationMatrix = mat4.create();
 
 let shaderPrograms = {};

@@ -69,7 +69,7 @@ function handleMouseMove(event) {
 }
 
 function handleMouseWheel(event) {
-    sceneZTranslation += event.deltaY / 50.0;
+    sceneTranslation[2] += event.deltaY / 50.0;
 }
 
 function initMouse() {
