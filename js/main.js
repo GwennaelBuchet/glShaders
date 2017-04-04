@@ -51,7 +51,7 @@ function render() {
     //gl.colorMask(false, false, false, true);
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
+    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
 
     renderScene();
 }
