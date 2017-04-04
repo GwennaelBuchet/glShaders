@@ -10,7 +10,7 @@ function renderScene() {
 
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
-    mat4.multiply(mvMatrix, mvMatrix, sceneRotationMatrix);
+    mat4.multiply(mvMatrix, mvMatrix, sceneRotation);
 
     gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
     gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);

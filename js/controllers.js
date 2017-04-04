@@ -14,7 +14,7 @@ function initKeyboard() {
                 params.isAnimated = !params.isAnimated;
                 break;
             case "Enter" :
-                mat4.identity(sceneRotationMatrix);
+                mat4.identity(sceneRotation);
                 break;
             case "w" :
                 params.renderingMode = gl.LINES;
@@ -62,7 +62,7 @@ function handleMouseMove(event) {
     let deltaY = newY - lastMouseY;
     mat4.rotate(newRotationMatrix, newRotationMatrix, degToRad(deltaY / 10), vec3.fromValues(1, 0, 0));
 
-    mat4.multiply(sceneRotationMatrix, newRotationMatrix, sceneRotationMatrix);
+    mat4.multiply(sceneRotation, newRotationMatrix, sceneRotation);
 
     lastMouseX = newX;
     lastMouseY = newY;

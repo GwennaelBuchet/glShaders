@@ -10,7 +10,7 @@ let mvMatrix = mat4.create();
 let pMatrix = mat4.create();
 
 let sceneTranslation = vec3.fromValues(0.0, 0.0, -10.0);
-let sceneRotationMatrix = mat4.create();
+let sceneRotation = mat4.create();
 
 let shaderPrograms = {};
 let meshes = {};
