@@ -22,3 +22,5 @@ let params = {
     isAnimated: true,
     renderingMode: null
 };
+
+let loader = new Loader("loader");

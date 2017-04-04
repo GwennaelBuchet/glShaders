@@ -56,22 +56,16 @@ function render() {
     renderScene();
 }
 
-function hideLoader(canvas) {
-    canvas.style.display = "block";
-
-    let loader = document.getElementById("loader");
-    loader.parentNode.removeChild(loader);
-}
-
 /**
  * Entry point for our application
  */
 function main(models) {
-    hideLoader(canvas);
+
+    loader.setText("Init GL Scene ...");
 
     initGL()
         .then(function () {
-            //initShaders();
+            loader.setText("Load Shaders ...");
             return loadShaders();
         })
         .then(function (shadersSource) {
@@ -91,6 +85,9 @@ function main(models) {
             initMenu();
 
             if (gl) {
+
+                loader.destroy(canvas);
+
                 // initialize the VBOs
                 for (let property in meshes) {
                     if (meshes.hasOwnProperty(property)) {
@@ -143,7 +140,8 @@ function loadShaders() {
     });
 }
 
-function loadMeshes() {
+function startLoading() {
+    loader.setText("Loading Meshes ...");
     OBJ.downloadMeshes({
             'Bootle': 'models/bottle.obj',
             'Driver': 'models/driver.obj',
