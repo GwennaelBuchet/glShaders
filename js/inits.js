@@ -46,7 +46,6 @@ function _loadTexture(url) {
         texture.image.src = url;
 
         resolve();
-
     });
 }
 
@@ -56,8 +55,6 @@ function _loadTexture(url) {
  * @returns {Promise}
  */
 function initTexture(urls) {
-    //urls = [{"zenika_beach" : "../img/zenika_1.jpg"}];
-
     return new Promise(function (resolve, reject) {
 
         let u = [];

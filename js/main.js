@@ -91,7 +91,9 @@ function main() {
         })
         .then(function () {
             animatedLoader.setText("Loading Textures ...");
-            initTexture();
+
+            let texturesURLs = [{"zenika_beach" : "../img/zenika_1.jpg"}];
+            initTexture(texturesURLs);
 
             params.renderingMode = gl.TRIANGLES;
 
