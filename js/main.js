@@ -1,5 +1,11 @@
 function drawScene() {
 
+    gl.clearColor(1, 1, 1, 1);
+    gl.colorMask(false, false, false, true);
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
+
     //for (let property in meshes) {
     //    if (meshes.hasOwnProperty(property)) {
 
@@ -44,20 +50,20 @@ function drawScene() {
     //}
 }
 
+function animate() {
+
+}
+
 
 /**
  * Main rendering loop
  */
 function renderLoop() {
-    requestAnimFrame(render);
-
-    //gl.clearColor(1, 1, 1, 1);
-    //gl.colorMask(false, false, false, true);
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
-
+    requestAnimFrame(renderLoop());
     drawScene();
+
+    if (params.isAnimated)
+        animate();
 }
 
 /**
