@@ -41,22 +41,23 @@ function _handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function _loadTexture(couple) {
+function LoadTexture(couple) {
     return new Promise(function (resolve, reject) {
 
-        let name = couple[Object.keys(couple)[0]];
-        let url = couple[Object.keys(couple)[1]];
+        let name = Object.keys(couple)[0];
+        let url = couple[name];
 
         texture = gl.createTexture();
         texture.image = new Image();
         texture.image.onload = function () {
             _handleLoadedTexture(texture);
-            resolve(name, texture);
+
+            textures[name] = texture;
+
+            resolve();
         };
 
         texture.image.src = url;
-
-        resolve();
     });
 }
 
@@ -65,18 +66,18 @@ function _loadTexture(couple) {
  * @param urls {Array} of objects with 1 attribute : {name : url}
  * @returns {Promise}
  */
-function initTexture(urls) {
+function LoadTextures(urls) {
     return new Promise(function (resolve, reject) {
 
         let u = [];
         urls.forEach(function (couple) {
-            u.push(new _loadTexture(couple));
+            u.push(new LoadTexture(couple));
         });
 
         Promise
             .all(u)
-            .then(values => {
-                resolve(values);
+            .then(() => {
+                resolve();
             }, reason => {
                 reject(reason);
             });
