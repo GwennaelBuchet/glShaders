@@ -103,9 +103,7 @@ function main() {
                     }
                 }
 
-                animatedLoader.setText("Start Rendering ...");
-                animatedLoader.destroy(canvas);
-
+                animatedLoader.setText("Initializing Rendering ...");
                 gl.clearColor(0.0, 0.0, 0.0, 1.0);
                 gl.enable(gl.DEPTH_TEST);
                 gl.depthFunc(gl.LEQUAL);
@@ -115,6 +113,9 @@ function main() {
                 //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 gl.enable(gl.BLEND);
                 gl.disable(gl.DEPTH_TEST);
+
+                animatedLoader.setText("Start Rendering ...");
+                animatedLoader.destroy(canvas);
 
                 render();
             }
