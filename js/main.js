@@ -66,18 +66,7 @@ function render() {
 function main() {
     animatedLoader.setText("Loading Meshes ...");
 
-    OBJ.downloadMeshes({
-        'Bootle': 'models/bottle.obj',
-        'Driver': 'models/driver.obj',
-        'Mei': 'models/mei.obj',
-        'Skelout': 'models/internal_skelout_full.obj',
-        'SpeedCar': 'models/SpeedCar.obj',
-        'Teapot': 'models/teapot.obj',
-        'Teddy': 'models/teddy.obj',
-        'Tuna': 'models/tuna.obj',
-        'Vi': 'models/vi.obj',
-        'X-Wing': 'models/x-wing.obj'
-    })
+    OBJ.downloadMeshes(meshSources)
         .then(function (m) {
             meshes = m;
             params.currentMesh = meshes[Object.keys(meshes)[0]];
@@ -85,19 +74,6 @@ function main() {
             animatedLoader.setText("Initializing GL Scene ...");
             initGL();
         })
-        /*.then(function () {
-         animatedLoader.setText("Loading Shaders ...");
-         return loadShaders(
-         [
-         {"program": "yellow", "vs":"shaders/flat/vs_simple.glsl", "fs":"shaders/flat2/fs_simple.glsl"},
-         {"program": "white", "vs":"shaders/flat/vs_simple.glsl", "fs":"shaders/flat2/fs_simple.glsl"}
-         ]
-         );
-         })
-         .then(function () {
-         animatedLoader.setText("Initializing SL Programs ...");
-         return initPrograms(shaders);
-         })*/
         .then(function () {
             animatedLoader.setText("Loading SL Programs ...");
             return loadPrograms();
