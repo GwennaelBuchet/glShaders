@@ -93,15 +93,26 @@ function initMenu() {
             _m.push(property)
         }
     }
-
     let ctrlMesh = gui.add(params, 'currentMesh', _m).name("Model");
     ctrlMesh.onFinishChange(function (value) {
         params.currentMesh = meshes[value];
     });
+
     gui.add(params, 'isAnimated').name('Animation');
 
     let f1 = gui.addFolder('Rendering');
-    f1.add(params, 'currentShaderProgram', shaderPrograms).name("Program");
+
+    let _p = [];
+    for (let property in shaderPrograms) {
+        if (shaderPrograms.hasOwnProperty(property)) {
+            _p.push(property)
+        }
+    }
+    let ctrlProgram = f1.add(params, 'currentShaderProgram', _p).name("Program");
+    ctrlProgram.onFinishChange(function (value) {
+        params.currentShaderProgram = shaderPrograms[value];
+    });
+
     f1.add(params, 'renderingMode', {
         Points: gl.POINTS,
         Wire: gl.LINES,
