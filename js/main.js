@@ -1,4 +1,4 @@
-function renderScene() {
+function drawScene() {
 
     //for (let property in meshes) {
     //    if (meshes.hasOwnProperty(property)) {
@@ -48,7 +48,7 @@ function renderScene() {
 /**
  * Main rendering loop
  */
-function render() {
+function renderLoop() {
     requestAnimFrame(render);
 
     //gl.clearColor(1, 1, 1, 1);
@@ -57,7 +57,7 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
 
-    renderScene();
+    drawScene();
 }
 
 /**
@@ -117,7 +117,7 @@ function main() {
                 animatedLoader.setText("Start Rendering ...");
                 animatedLoader.destroy(canvas);
 
-                render();
+                renderLoop();
             }
         });
 }
