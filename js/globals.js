@@ -13,8 +13,8 @@ let sceneTranslation = vec3.fromValues(0.0, 0.0, -10.0);
 let sceneRotation = mat4.create();
 
 let programsSources = [
-    {"name": "yellow", "vs": "js/shaders/flat/vs_simple.glsl", "fs": "js/shaders/flat/fs_simple.glsl"},
-    {"name": "white", "vs": "js/shaders/flat2/vs_simple.glsl", "fs": "js/shaders/flat2/fs_simple.glsl"}
+    {"name": "white", "vs": "js/shaders/flat/vs_simple.glsl", "fs": "js/shaders/flat/fs_simple.glsl"},
+   // {"name": "white", "vs": "js/shaders/phong/vs_phong.glsl", "fs": "js/shaders/phong/fs_phong.glsl"}
 ];
 let shaderPrograms = {};
 
