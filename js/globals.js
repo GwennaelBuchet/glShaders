@@ -32,6 +32,8 @@ let meshSources = {
 };
 let meshes = {};
 
+let texturesURLs = [{"zenika_beach": "../img/zenika_beach.jpg"}];
+
 let params = {
     currentShaderProgram: null,
     currentMesh: null,
