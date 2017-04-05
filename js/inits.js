@@ -21,6 +21,17 @@ function initGL() {
     });
 }
 
+function initLights() {
+    /*gl.uniform3f(prg.uLightDirection, 0.0, -1.0, -1.0);
+     gl.uniform4fv(prg.uLightAmbient, [0.03, 0.03, 0.03, 1.0]);
+     gl.uniform4fv(prg.uLightDiffuse, [1.0, 1.0, 1.0, 1.0]);
+     gl.uniform4fv(prg.uLightSpecular, [1.0, 1.0, 1.0, 1.0]);
+     gl.uniform4fv(prg.uMaterialAmbient, [1.0, 1.0, 1.0, 1.0]);
+     gl.uniform4fv(prg.uMaterialDiffuse, [0.5, 0.8, 0.1, 1.0]);
+     gl.uniform4fv(prg.uMaterialSpecular, [1.0, 1.0, 1.0, 1.0]);
+     gl.uniform1f(prg.uShininess, 230.0);*/
+}
+
 function _handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, t.image);
@@ -30,7 +41,7 @@ function _handleLoadedTexture(t) {
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function _loadTexture(url) {
+function _loadTexture(couple) {
     return new Promise(function (resolve, reject) {
 
         let name = couple[Object.keys(couple)[0]];
@@ -72,7 +83,37 @@ function initTexture(urls) {
     });
 }
 
-function createShaderProgram(gl, programName, vertexShader, fragmentShader) {
+
+/**
+ *
+ * @param gl {WebGLRenderingContext} Global webgl context of the application
+ * @param source {String} Source code for the shader to create
+ * @param type {String} "fs" || "x-shader/x-fragment" || "vs" || "x-shader/x-vertex"
+ * @returns {WebGLShader || null}
+ * @private
+ */
+function _createShader(gl, source, type) {
+    let shader;
+    if (type === "fs" || type === "x-shader/x-fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (type === "vs" || type === "x-shader/x-vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader));
+        return null;
+    }
+
+    return shader;
+}
+
+function createShaderProgram(gl, vertexShader, fragmentShader) {
     let shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
@@ -98,76 +139,78 @@ function createShaderProgram(gl, programName, vertexShader, fragmentShader) {
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 
-    shaderPrograms[programName] = shaderProgram;
+    gl.useProgram(null);
+
+    return shaderProgram;
 }
 
 /**
- * 'Shaders' global attribute contains VS abd FS in the same order [vs, fs, vs, fs, vs, fs, ...].
- * Programs will be created with the pairs of shaders.
- * @param shaders
+ *
+ * @param program
+ * @returns {Promise}
+ * @constructor
+ */
+function LoadProgram(program) {
+    return new Promise(function (resolve, reject) {
+        //load files content for the couple vs/fs
+        _loadShaderFilesContent([program.vs, program.fs])
+
+            .then(function (shadersSource) {
+                    //create vs and fs shaders from the contents previously loaded
+                    let vertexShader = _createShader(gl, shadersSource[0], "vs");
+                    let fragmentShader = _createShader(gl, shadersSource[1], "fs");
+
+                    //create shader program from shaders
+                    shaderPrograms[program.name] = createShaderProgram(gl, vertexShader, fragmentShader);
+
+                    resolve();
+                }
+            )
+    });
+}
+
+/**
+ * Load all shader programs for the applications
  * @returns {Promise}
  */
-function initPrograms(shaders) {
+function loadPrograms() {
     return new Promise(function (resolve, reject) {
 
-        for (let i = 0, len = shaders.length; i < len; i += 2) {
-            let vertexShader = shaders[i];
-            let fragmentShader = shaders[i + 1];
+        //For each program :
+        //  - load vs & fs content from files
+        //  - create vs and fs shader from contents
+        //  - create shader program from vs and fs
 
-            createShaderProgram(gl, "program_" + i, vertexShader, fragmentShader);
-        }
+        let p = [];
+        programsSources.forEach(function (program) {
+            p.push(new LoadProgram(program));
+        });
 
-        params.currentShaderProgram = shaderPrograms["program_0"];
+        Promise
+            .all(p)
+            .then(() => {
+                //set the first program as the current one
+                params.currentShaderProgram = shaderPrograms[programsSources[0].name];
 
-        resolve();
+                resolve();
+            }, reason => {
+                reject(reason);
+            });
     });
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////:
-// Loading and creating shaders
-
-function _createShader(gl, source, type) {
-    let shader;
-    if (type === "fs" || type === "x-shader/x-fragment") {
-        shader = gl.createShader(gl.FRAGMENT_SHADER);
-    } else if (type === "vs" || type === "x-shader/x-vertex") {
-        shader = gl.createShader(gl.VERTEX_SHADER);
-    } else {
-        return null;
-    }
-
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert(gl.getShaderInfoLog(shader));
-        return null;
-    }
-
-    return shader;
-}
-
-function _loadShaders(shadersSource) {
-
-    return new Promise(function (resolve, reject) {
-        for (let i = 0, len = shadersSource.length; i < len; i += 2) {
-            let vertexShader = _createShader(gl, shadersSource[i], "vs");
-            let fragmentShader = _createShader(gl, shadersSource[i + 1], "fs");
-
-            shaders.push(vertexShader);
-            shaders.push(fragmentShader);
-        }
-
-        resolve();
-    });
-}
-
-function _loadShaderFiles(urls) {
+/**
+ * Load files content
+ * @param shaderFiles {Array} of filenames
+ * @returns {Promise}
+ * @private
+ */
+function _loadShaderFilesContent(shaderFiles) {
 
     return new Promise(function (resolve, reject) {
         let u = [];
-        urls.forEach(function (url) {
-            u.push(new LoadFile(url));
+        shaderFiles.forEach(function (shaderFile) {
+            u.push(new LoadFile(shaderFile));
         });
 
         Promise
@@ -177,23 +220,5 @@ function _loadShaderFiles(urls) {
             }, reason => {
                 reject(reason);
             });
-    });
-}
-
-function loadShaders() {
-    return new Promise(function (resolve, reject) {
-        _loadShaderFiles(["js/shaders/vs/simple.glsl", "js/shaders/fs/monochrome.glsl"])
-            .then(function (shadersSource) {
-                    return _loadShaders(shadersSource);
-                }
-            )
-            .then(function () {
-                resolve();
-            })
-
-            .catch(
-                function (error) {
-                    reject(error);
-                });
     });
 }

@@ -12,7 +12,10 @@ let pMatrix = mat4.create();
 let sceneTranslation = vec3.fromValues(0.0, 0.0, -10.0);
 let sceneRotation = mat4.create();
 
-let shaders = [];
+let programsSources = [
+    {"name": "yellow", "vs": "js/shaders/flat/vs_simple.glsl", "fs": "js/shaders/flat/fs_simple.glsl"},
+    {"name": "white", "vs": "js/shaders/flat2/vs_simple.glsl", "fs": "js/shaders/flat2/fs_simple.glsl"}
+];
 let shaderPrograms = {};
 let meshes = {};
 
@@ -25,3 +28,5 @@ let params = {
 };
 
 let animatedLoader = new AnimatedLoader("animatedLoader");
+
+

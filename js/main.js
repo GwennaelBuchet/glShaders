@@ -8,6 +8,8 @@ function renderScene() {
     let mesh = params.currentMesh;
     let program = params.currentShaderProgram;
 
+    gl.useProgram(program);
+
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
     mat4.multiply(mvMatrix, mvMatrix, sceneRotation);
@@ -36,6 +38,8 @@ function renderScene() {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.drawElements(params.renderingMode, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+    gl.useProgram(null);
     //    }
     //}
 }
@@ -81,19 +85,30 @@ function main() {
             animatedLoader.setText("Initializing GL Scene ...");
             initGL();
         })
+        /*.then(function () {
+         animatedLoader.setText("Loading Shaders ...");
+         return loadShaders(
+         [
+         {"program": "yellow", "vs":"shaders/flat/vs_simple.glsl", "fs":"shaders/flat2/fs_simple.glsl"},
+         {"program": "white", "vs":"shaders/flat/vs_simple.glsl", "fs":"shaders/flat2/fs_simple.glsl"}
+         ]
+         );
+         })
+         .then(function () {
+         animatedLoader.setText("Initializing SL Programs ...");
+         return initPrograms(shaders);
+         })*/
         .then(function () {
-            animatedLoader.setText("Loading Shaders ...");
-            return loadShaders();
-        })
-        .then(function () {
-            animatedLoader.setText("Initializing SL Programs ...");
-            return initPrograms(shaders);
+            animatedLoader.setText("Loading SL Programs ...");
+            return loadPrograms();
         })
         .then(function () {
             animatedLoader.setText("Loading Textures ...");
 
-            let texturesURLs = [{"zenika_beach" : "../img/zenika_1.jpg"}];
+            let texturesURLs = [{"zenika_beach": "../img/zenika_1.jpg"}];
             initTexture(texturesURLs);
+
+            initLights();
 
             params.renderingMode = gl.TRIANGLES;
 
