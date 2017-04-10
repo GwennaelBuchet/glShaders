@@ -80,7 +80,7 @@ function main() {
 		})
 		.then(function () {
 		 animatedLoader.setText("Loading Textures ...");
-		 return LoadTextures(texturesURLs);
+		 return LoadTextures();
 		 })
 		.then(function () {
 			params.renderingMode = gl.TRIANGLES;

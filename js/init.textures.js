@@ -32,14 +32,13 @@ function LoadTexture(couple) {
 
 /**
  *
- * @param urls {Array} of objects with 1 attribute : {name : url}
  * @returns {Promise}
  */
-function LoadTextures(urls) {
+function LoadTextures() {
 	return new Promise(function (resolve, reject) {
 
 		let u = [];
-		urls.forEach(function (couple) {
+		texturesURLs.forEach(function (couple) {
 			u.push(new LoadTexture(couple));
 		});
 
