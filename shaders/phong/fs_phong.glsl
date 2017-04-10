@@ -18,30 +18,31 @@ varying vec3 vEyeVec;
 
 void main(void)
 {
-     vec3 L = normalize(uLightDirection);
-     vec3 N = normalize(vNormal);
+#ifdef TEXTURED
+    vec2 tex = gl_TexCoord[0].xy;
+#endif
+    vec3 L = normalize(uLightDirection);
+    vec3 N = normalize(vNormal);
 
-     float lambertTerm = dot(N,-L);
+    float lambertTerm = dot(N,-L);
 
-     vec4 Ia = uLightAmbient * uMaterialAmbient;
+    vec4 Ia = uLightAmbient * uMaterialAmbient;
 
-     vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);
 
-     vec4 Is = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 Is = vec4(0.0, 0.0, 0.0, 1.0);
 
-     if(lambertTerm > 0.0)
-     {
-          Id = uLightDiffuse * uMaterialDiffuse * lambertTerm;
-
-          vec3 E = normalize(vEyeVec);
-          vec3 R = reflect(L, N);
-          float specular = pow( max(dot(R, E), 0.0), uShininess);
-
+    if(lambertTerm > 0.0)
+    {
+         Id = uLightDiffuse * uMaterialDiffuse * lambertTerm;
+         vec3 E = normalize(vEyeVec);
+         vec3 R = reflect(L, N);
+         float specular = pow( max(dot(R, E), 0.0), uShininess);
           Is = uLightSpecular * uMaterialSpecular * specular;
      }
 
-     vec4 finalColor = Ia + Id + Is;
-     finalColor.a = 1.0;
+    vec4 finalColor = Ia + Id + Is;
+    finalColor.a = 1.0;
 
-     gl_FragColor = finalColor;
+    gl_FragColor = finalColor;
 }

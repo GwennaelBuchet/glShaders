@@ -3,20 +3,20 @@
  */
 class AnimatedLoader {
 
-    constructor(idElt) {
-        this.elt = document.getElementById(idElt);
-        this.txtElt = this.elt.querySelector("#loaderText");
-    };
+	constructor(idElt) {
+		this.elt    = document.getElementById(idElt);
+		this.txtElt = this.elt.querySelector("#loaderText");
+	};
 
-    setText(txt) {
-        this.txtElt.innerText = txt;
-        console.log(txt);
-    };
+	setText(txt) {
+		this.txtElt.innerText = txt;
+		console.log(txt);
+	};
 
-    destroy(lowerElt) {
-        lowerElt.style.display = "block";
+	destroy(lowerElt) {
+		lowerElt.style.display = "block";
 
-        this.elt.parentNode.removeChild(this.elt);
-    };
+		this.elt.parentNode.removeChild(this.elt);
+	};
 
 }

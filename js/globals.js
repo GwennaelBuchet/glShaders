@@ -20,16 +20,16 @@ let programsSources = [
 let shaderPrograms  = {};
 
 let meshSources = {
-	'Bootle'  : 'models/bottle.obj',
-	'Driver'  : 'models/driver.obj',
-	'Mei'     : 'models/mei.obj',
-	'Skelout' : 'models/internal_skelout_full.obj',
-	'SpeedCar': 'models/SpeedCar.obj',
-	'Teapot'  : 'models/teapot.obj',
-	'Teddy'   : 'models/teddy.obj',
-	'Tuna'    : 'models/tuna.obj',
-	'Vi'      : 'models/vi.obj',
-	'X-Wing'  : 'models/x-wing.obj'
+	/*'Bootle'  : 'models/bottle.obj',
+	 'Driver'  : 'models/driver.obj',
+	 'Mei'     : 'models/mei.obj',
+	 'Skelout' : 'models/internal_skelout_full.obj',
+	 'SpeedCar': 'models/SpeedCar.obj',*/
+	'Teapot': 'models/teapot.obj',
+	/*'Teddy'   : 'models/teddy.obj',
+	 'Tuna'    : 'models/tuna.obj',
+	 'Vi'      : 'models/vi.obj',
+	 'X-Wing'  : 'models/x-wing.obj'*/
 };
 let meshes      = {};
 
