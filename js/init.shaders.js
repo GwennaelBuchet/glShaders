@@ -31,6 +31,12 @@ function _createShader(gl, source, type) {
 	return shader;
 }
 
+function _setUniform(gl, program, uniform) {
+	let uniformLocation = gl.getUniformLocation(program, uniform);
+	if (uniformLocation !== null)
+		program[uniform] = uniformLocation;
+}
+
 function createShaderProgram(gl, vertexShader, fragmentShader) {
 	let shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
@@ -54,8 +60,17 @@ function createShaderProgram(gl, vertexShader, fragmentShader) {
 	if (shaderProgram.textureCoordAttribute >= 0)
 		gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-	shaderProgram.pMatrixUniform  = gl.getUniformLocation(shaderProgram, "uPMatrix");
-	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	_setUniform(gl, shaderProgram, "uPMatrix");
+	_setUniform(gl, shaderProgram, "uMVMatrix");
+	_setUniform(gl, shaderProgram, "uNMatrix");
+	_setUniform(gl, shaderProgram, "uMaterialAmbient");
+	_setUniform(gl, shaderProgram, "uMaterialDiffuse");
+	_setUniform(gl, shaderProgram, "uMaterialSpecular");
+	_setUniform(gl, shaderProgram, "uShininess");
+	_setUniform(gl, shaderProgram, "uLightAmbient");
+	_setUniform(gl, shaderProgram, "uLightDiffuse");
+	_setUniform(gl, shaderProgram, "uLightSpecular");
+	_setUniform(gl, shaderProgram, "uLightDirection");
 
 	return shaderProgram;
 }
@@ -77,7 +92,9 @@ function LoadProgram(program) {
 					let fragmentShader = _createShader(gl, shadersSource[1], "fs");
 
 					//create shader program from shaders
-					shaderPrograms[program.name] = createShaderProgram(gl, vertexShader, fragmentShader);
+					let p                        = createShaderProgram(gl, vertexShader, fragmentShader);
+					p.name                       = program.name;
+					shaderPrograms[program.name] = p;
 
 					resolve();
 				}

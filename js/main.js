@@ -19,8 +19,8 @@ function drawScene() {
 
 	initLights(program);
 
-	gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
-	gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
+	gl.uniformMatrix4fv(program.uPMatrix, false, pMatrix);
+	gl.uniformMatrix4fv(program.uMVMatrix, false, mvMatrix);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 	gl.vertexAttribPointer(program.vertexPositionAttribute, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
