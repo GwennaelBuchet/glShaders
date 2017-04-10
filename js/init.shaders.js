@@ -32,35 +32,6 @@ function _createShader(gl, source, type) {
 }
 
 function createShaderProgram(gl, vertexShader, fragmentShader) {
-	/*let shaderProgram = gl.createProgram();
-	 gl.attachShader(shaderProgram, vertexShader);
-	 gl.attachShader(shaderProgram, fragmentShader);
-	 gl.linkProgram(shaderProgram);
-
-	 if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-	 alert("Could not initialise shaders");
-	 }
-
-	 gl.useProgram(shaderProgram);
-
-	 shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-	 gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
-	 shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
-	 if (shaderProgram.vertexNormalAttribute >= 0)
-	 gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
-	 shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-	 if (shaderProgram.textureCoordAttribute >= 0)
-	 gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-
-	 shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-	 shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-
-	 gl.useProgram(null);
-
-	 return shaderProgram;*/
-
 	let shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
 	gl.attachShader(shaderProgram, fragmentShader);
