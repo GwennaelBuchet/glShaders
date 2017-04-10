@@ -17,6 +17,8 @@ function drawScene() {
 	mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
 	mat4.multiply(mvMatrix, mvMatrix, sceneRotation);
 
+	initLights(program);
+
 	gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
 
@@ -76,15 +78,11 @@ function main() {
 			animatedLoader.setText("Loading SL Programs ...");
 			return loadPrograms();
 		})
-		/*.then(function () {
+		.then(function () {
 		 animatedLoader.setText("Loading Textures ...");
 		 return LoadTextures(texturesURLs);
-		 })*/
+		 })
 		.then(function () {
-
-			animatedLoader.setText("Initializing Lights ...");
-			//initLights();
-
 			params.renderingMode = gl.TRIANGLES;
 
 			animatedLoader.setText("Initializing Controllers and Menu ...");
