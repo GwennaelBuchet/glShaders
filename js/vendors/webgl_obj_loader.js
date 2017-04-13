@@ -254,14 +254,14 @@
 			// this is used to check if all meshes have been downloaded
 			// if meshes is supplied, then it will be populated, otherwise
 			// a new object is created. this will be passed into the completionCallback
-			if (meshes === undefined) meshes = {};
+			if (meshes === undefined) meshes = [];
 			// loop over the mesh_name,url key,value pairs
 			for (let mesh_name in nameAndURLs) {
 				if (nameAndURLs.hasOwnProperty(mesh_name)) {
 					new Ajax().get(nameAndURLs[mesh_name], (function (name) {
 						return function (data, status) {
 							if (status === 200) {
-								meshes[name] = new OBJ.Mesh(data);
+								meshes[semaphore-1] = new OBJ.Mesh(data);
 							}
 							else {
 								error = true;
@@ -298,7 +298,7 @@
 		buffer.itemSize = itemSize;
 		buffer.numItems = data.length / itemSize;
 		return buffer;
-	}
+	};
 
 	/**
 	 * Takes in the WebGL context and a Mesh, then creates and appends the buffers

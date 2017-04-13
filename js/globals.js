@@ -31,7 +31,7 @@ let meshSources = {
 	'Vi'      : 'models/vi.obj',
 	'X-Wing'  : 'models/x-wing.obj'*/
 };
-let meshes      = {};
+let meshes      = [];
 
 let texturesURLs = [
 	{"zenika_beach": "img/zenika_beach.jpg"}

@@ -70,15 +70,33 @@ function renderLoop() {
 function main() {
 	animatedLoader.setText("Loading Meshes ...");
 
-	OBJ.downloadMeshes(meshSources)
-		.then(function (m) {
-			meshes             = m;
-			params.currentMesh = meshes[Object.keys(meshes)[0]];
-
-			animatedLoader.setText("Initializing GL Scene ...");
-			return initGL();
-		})
+	animatedLoader.setText("Initializing GL Scene ...");
+	initGL()
 		.then(function () {
+			return OBJ.downloadMeshes(meshSources);
+		})
+		.then(function (m) {
+			animatedLoader.setText("Initializing VBOs ...");
+			// initialize the VBOs
+
+			m.forEach(function (mesh) {
+				OBJ.initMeshBuffers(gl, mesh);
+
+				let newMesh = new Mesh();
+
+				newMesh.indexBuffer   = mesh.indexBuffer;
+				newMesh.vertexBuffer  = mesh.vertexBuffer;
+				newMesh.textureBuffer = mesh.textureBuffer;
+				newMesh.normalBuffer  = mesh.normalBuffer;
+
+				newMesh.textures = mesh.textures;
+
+				//OBJ.deleteMeshBuffers(gl, mesh);
+
+				meshes.push(newMesh);
+			});
+			params.currentMesh = meshes[0];
+
 			animatedLoader.setText("Loading SL Programs ...");
 			return loadPrograms();
 		})
@@ -95,13 +113,6 @@ function main() {
 			initMenu();
 
 			if (gl) {
-				animatedLoader.setText("Initializing VBOs ...");
-				// initialize the VBOs
-				for (let property in meshes) {
-					if (meshes.hasOwnProperty(property)) {
-						OBJ.initMeshBuffers(gl, meshes[property]);
-					}
-				}
 
 				animatedLoader.setText("Initializing Rendering ...");
 				gl.clearColor(0.0, 0.0, 0.0, 1.0);
