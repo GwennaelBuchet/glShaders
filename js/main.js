@@ -1,32 +1,26 @@
-function drawScene() {
+function drawMesh(mesh, program) {
 
-	//gl.clearColor(1, 1, 1, 1);
-	//gl.colorMask(false, false, false, true);
-	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
-
-	//for (let property in meshes) {
-	//    if (meshes.hasOwnProperty(property)) {
-	//        let mesh = meshes[property];
-	let mesh    = params.currentMesh;
-	let program = params.currentShaderProgram;
-	gl.useProgram(program);
-
+	//todo : to have 2 mvMatrix : 1 global + 1 per mesh
 	mat4.identity(mesh.mvMatrix);
 	mat4.translate(mesh.mvMatrix, mesh.mvMatrix, sceneTranslation);
 	mat4.multiply(mesh.mvMatrix, mesh.mvMatrix, sceneRotation);
 
-	initLights(program);
+	gl.useProgram(program);
 
 	gl.uniformMatrix4fv(program.uPMatrix, false, pMatrix);
-	gl.uniformMatrix4fv(program.uMVMatrix, false, mesh.mvMatrix);
+
+	lights.forEach(function (light) {
+		light.setToProgram(program);
+	});
+
+	mesh.setToProgram(program);
+
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 	gl.vertexAttribPointer(program.aVertexPosition, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 	//if (program.aTextureCoord >= 0) {
-	if (!mesh.textures.length) {
+	if (!mesh.material.textures.length) {
 		gl.disableVertexAttribArray(program.aTextureCoord);
 	}
 	else {
@@ -45,6 +39,23 @@ function drawScene() {
 	gl.drawElements(params.renderingMode, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
 	gl.useProgram(null);
+}
+
+function drawScene() {
+
+	//gl.clearColor(1, 1, 1, 1);
+	//gl.colorMask(false, false, false, true);
+	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	mat4.perspective(pMatrix, 45, gl.viewportWidth / gl.viewportHeight, 0.1, 500.0);
+
+	//for (let property in meshes) {
+	//    if (meshes.hasOwnProperty(property)) {
+	//        let mesh = meshes[property];
+	let mesh    = params.currentMesh;
+	let program = params.currentShaderProgram;
+
+	drawMesh(mesh, program);
 }
 
 function animate() {
@@ -87,7 +98,7 @@ function main() {
 				newMesh.textureBuffer = mesh.textureBuffer;
 				newMesh.normalBuffer  = mesh.normalBuffer;
 
-				newMesh.textures = mesh.textures;
+				newMesh.material.textures = mesh.textures;
 
 				meshes.push(newMesh);
 			});
@@ -102,6 +113,9 @@ function main() {
 		})
 		.then(function () {
 			params.renderingMode = gl.TRIANGLES;
+
+			animatedLoader.setText("Initializing Lights");
+			initLights();
 
 			animatedLoader.setText("Initializing Controllers and Menu ...");
 			initKeyboard();
