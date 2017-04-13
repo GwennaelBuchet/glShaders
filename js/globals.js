@@ -10,7 +10,7 @@ let canvasDimension = {};
  * Projection Matrix for the scene
  * @type {mat4}
  */
-let pMatrix  = mat4.create();
+let pMatrix = mat4.create();
 
 /**
  * Global translation vector of the scene
@@ -31,15 +31,15 @@ let shaderPrograms  = {};
 
 let meshSources = {
 	/*'Bootle'  : 'models/bottle.obj',
-	'Driver'  : 'models/driver.obj',
-	'Mei'     : 'models/mei.obj',
-	'Skelout' : 'models/internal_skelout_full.obj',
-	'SpeedCar': 'models/SpeedCar.obj',*/
-	'Teapot'  : 'models/teapot.obj',
+	 'Driver'  : 'models/driver.obj',
+	 'Mei'     : 'models/mei.obj',
+	 'Skelout' : 'models/internal_skelout_full.obj',
+	 'SpeedCar': 'models/SpeedCar.obj',*/
+	'Teapot': 'models/teapot.obj',
 	/*'Teddy'   : 'models/teddy.obj',
-	'Tuna'    : 'models/tuna.obj',
-	'Vi'      : 'models/vi.obj',
-	'X-Wing'  : 'models/x-wing.obj'*/
+	 'Tuna'    : 'models/tuna.obj',
+	 'Vi'      : 'models/vi.obj',
+	 'X-Wing'  : 'models/x-wing.obj'*/
 };
 /**
  * @type {Array} of {Mesh}
@@ -50,6 +50,13 @@ let texturesURLs = [
 	{"zenika_beach": "img/zenika_beach.jpg"}
 ];
 let textures     = {};
+
+/**
+ * @type {Array} of {Light}
+ */
+let lights = [];
+let MAX_LIGHT = 8;
+let NB_LIGHT = 1;
 
 let params = {
 	currentShaderProgram: null,
