@@ -5,6 +5,9 @@
 class Mesh {
 
 	constructor() {
+
+		this.material = new Material();
+
 		this.mvMatrix = mat4.create();
 		this.nMatrix  = mat4.create();
 
@@ -12,34 +15,12 @@ class Mesh {
 		this.textureBuffer = null;
 		this.vertexBuffer  = null;
 		this.indexBuffer   = null;
-
-		this.vertices      = [];
-		this.vertexNormals = [];
-		this.textures      = [];
-		this.indices       = [];
 	}
 
-	initMeshBuffers(gl) {
-		this.normalBuffer  = Mesh._buildBuffer(gl, gl.ARRAY_BUFFER, this.vertexNormals, 3);
-		this.textureBuffer = Mesh._buildBuffer(gl, gl.ARRAY_BUFFER, this.textures, 2);
-		this.vertexBuffer  = Mesh._buildBuffer(gl, gl.ARRAY_BUFFER, this.vertices, 3);
-		this.indexBuffer   = Mesh._buildBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, this.indices, 1);
-	}
+	setToProgram(program) {
+		gl.uniformMatrix4fv(program.uMVMatrix, false, this.mvMatrix);
+		gl.uniformMatrix4fv(program.nMatrix, false, this.nMatrix);
 
-	deleteMeshBuffers(gl) {
-		gl.deleteBuffer(this.normalBuffer);
-		gl.deleteBuffer(this.textureBuffer);
-		gl.deleteBuffer(this.vertexBuffer);
-		gl.deleteBuffer(this.indexBuffer);
-	}
-
-	static _buildBuffer(gl, type, data, itemSize) {
-		let buffer    = gl.createBuffer();
-		let arrayView = type === gl.ARRAY_BUFFER ? Float32Array : Uint16Array;
-		gl.bindBuffer(type, buffer);
-		gl.bufferData(type, new arrayView(data), gl.STATIC_DRAW);
-		buffer.itemSize = itemSize;
-		buffer.numItems = data.length / itemSize;
-		return buffer;
+		this.material.setToProgram(program);
 	}
 }
