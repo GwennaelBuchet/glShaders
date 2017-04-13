@@ -358,15 +358,15 @@
 	 *     // in this case, the texture vertexAttribArray will need to be disabled
 	 *     // before the call to drawElements
 	 *     if(!mesh.textures.length){
-   *       gl.disableVertexAttribArray(shaderProgram.textureCoordAttribute);
-   *     }
+	 *       gl.disableVertexAttribArray(shaderProgram.textureCoordAttribute);
+	 *     }
 	 *     else{
-   *       // if the texture vertexAttribArray has been previously
-   *       // disabled, then it needs to be re-enabled
-   *       gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-   *       gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
-   *       gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
-   *     }
+	 *       // if the texture vertexAttribArray has been previously
+	 *       // disabled, then it needs to be re-enabled
+	 *       gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+	 *       gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
+	 *       gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	 *     }
 	 *
 	 *     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
 	 *     gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);

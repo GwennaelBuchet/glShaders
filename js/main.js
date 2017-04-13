@@ -13,6 +13,8 @@ function drawScene() {
 	let mesh    = params.currentMesh;
 	let program = params.currentShaderProgram;
 
+	gl.useProgram(program);
+
 	mat4.identity(mvMatrix);
 	mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
 	mat4.multiply(mvMatrix, mvMatrix, sceneRotation);
@@ -23,26 +25,28 @@ function drawScene() {
 	gl.uniformMatrix4fv(program.uMVMatrix, false, mvMatrix);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-	gl.vertexAttribPointer(program.vertexPositionAttribute, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(program.aVertexPosition, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-	if (program.textureCoordAttribute >= 0) {
-		if (!mesh.textures.length) {
-			gl.disableVertexAttribArray(program.textureCoordAttribute);
-		}
-		else {
-			gl.enableVertexAttribArray(program.textureCoordAttribute);
-			gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
-			gl.vertexAttribPointer(program.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		}
+	//if (program.aTextureCoord >= 0) {
+	if (!mesh.textures.length) {
+		gl.disableVertexAttribArray(program.aTextureCoord);
 	}
+	else {
+		gl.enableVertexAttribArray(program.aTextureCoord);
+		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.textureBuffer);
+		gl.vertexAttribPointer(program.aTextureCoord, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	}
+	//}
 
-	if (program.vertexNormalAttribute >= 0) {
-		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
-		gl.vertexAttribPointer(program.vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-	}
+	//if (program.aVertexNormal >= 0) {
+	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
+	gl.vertexAttribPointer(program.aVertexNormal, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	//}
 
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
 	gl.drawElements(params.renderingMode, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+	gl.useProgram(null);
 }
 
 function animate() {
@@ -79,9 +83,9 @@ function main() {
 			return loadPrograms();
 		})
 		.then(function () {
-		 animatedLoader.setText("Loading Textures ...");
-		 return LoadTextures();
-		 })
+			animatedLoader.setText("Loading Textures ...");
+			return LoadTextures();
+		})
 		.then(function () {
 			params.renderingMode = gl.TRIANGLES;
 

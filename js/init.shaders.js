@@ -49,28 +49,32 @@ function createShaderProgram(gl, vertexShader, fragmentShader) {
 
 	gl.useProgram(shaderProgram);
 
-	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
-	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+	shaderProgram.aVertexNormal = gl.getAttribLocation(shaderProgram, "aVertexNormal");
 	if (shaderProgram.vertexNormalAttribute >= 0)
-		gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+		gl.enableVertexAttribArray(shaderProgram.aVertexNormal);
 
-	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+	shaderProgram.aVertexPosition = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+	gl.enableVertexAttribArray(shaderProgram.aVertexPosition);
+
+	shaderProgram.aTextureCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
 	if (shaderProgram.textureCoordAttribute >= 0)
-		gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+		gl.enableVertexAttribArray(shaderProgram.aTextureCoord);
 
 	_setUniform(gl, shaderProgram, "uPMatrix");
 	_setUniform(gl, shaderProgram, "uMVMatrix");
 	_setUniform(gl, shaderProgram, "uNMatrix");
+
 	_setUniform(gl, shaderProgram, "uMaterialAmbient");
 	_setUniform(gl, shaderProgram, "uMaterialDiffuse");
 	_setUniform(gl, shaderProgram, "uMaterialSpecular");
 	_setUniform(gl, shaderProgram, "uShininess");
+
 	_setUniform(gl, shaderProgram, "uLightAmbient");
 	_setUniform(gl, shaderProgram, "uLightDiffuse");
 	_setUniform(gl, shaderProgram, "uLightSpecular");
 	_setUniform(gl, shaderProgram, "uLightDirection");
+
+	gl.useProgram(null);
 
 	return shaderProgram;
 }
