@@ -6,7 +6,7 @@ class Mesh {
 
 	constructor() {
 		this.mvMatrix = mat4.create();
-		this.pMatrix  = mat4.create();
+		this.nMatrix  = mat4.create();
 
 		this.normalBuffer  = null;
 		this.textureBuffer = null;

@@ -6,16 +6,26 @@ let gl;
 const canvas        = document.getElementById("scene");
 let canvasDimension = {};
 
-let mvMatrix = mat4.create();
+/**
+ * Projection Matrix for the scene
+ * @type {mat4}
+ */
 let pMatrix  = mat4.create();
-let nMatrix  = mat4.create();
 
+/**
+ * Global translation vector of the scene
+ * @type {vec3}
+ */
 let sceneTranslation = vec3.fromValues(0.0, 0.0, -10.0);
+/**
+ * GLobal rotation matrix of the scene
+ * @type {mat4}
+ */
 let sceneRotation    = mat4.create();
 
 let programsSources = [
 	{"name": "white", "vs": "shaders/flat/vs_simple.glsl", "fs": "shaders/flat/fs_simple.glsl"},
-	//{"name": "phong", "vs": "shaders/phong/vs_phong.glsl", "fs": "shaders/phong/fs_phong.glsl"}
+	{"name": "phong", "vs": "shaders/phong/vs_phong.glsl", "fs": "shaders/phong/fs_phong.glsl"}
 ];
 let shaderPrograms  = {};
 
@@ -31,6 +41,9 @@ let meshSources = {
 	'Vi'      : 'models/vi.obj',
 	'X-Wing'  : 'models/x-wing.obj'*/
 };
+/**
+ * @type {Array} of {Mesh}
+ */
 let meshes      = [];
 
 let texturesURLs = [

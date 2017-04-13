@@ -9,20 +9,18 @@ function drawScene() {
 	//for (let property in meshes) {
 	//    if (meshes.hasOwnProperty(property)) {
 	//        let mesh = meshes[property];
-
 	let mesh    = params.currentMesh;
 	let program = params.currentShaderProgram;
-
 	gl.useProgram(program);
 
-	mat4.identity(mvMatrix);
-	mat4.translate(mvMatrix, mvMatrix, sceneTranslation);
-	mat4.multiply(mvMatrix, mvMatrix, sceneRotation);
+	mat4.identity(mesh.mvMatrix);
+	mat4.translate(mesh.mvMatrix, mesh.mvMatrix, sceneTranslation);
+	mat4.multiply(mesh.mvMatrix, mesh.mvMatrix, sceneRotation);
 
 	initLights(program);
 
 	gl.uniformMatrix4fv(program.uPMatrix, false, pMatrix);
-	gl.uniformMatrix4fv(program.uMVMatrix, false, mvMatrix);
+	gl.uniformMatrix4fv(program.uMVMatrix, false, mesh.mvMatrix);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 	gl.vertexAttribPointer(program.aVertexPosition, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
