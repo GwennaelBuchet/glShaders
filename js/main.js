@@ -91,8 +91,6 @@ function main() {
 
 				newMesh.textures = mesh.textures;
 
-				//OBJ.deleteMeshBuffers(gl, mesh);
-
 				meshes.push(newMesh);
 			});
 			params.currentMesh = meshes[0];
